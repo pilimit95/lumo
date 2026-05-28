@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumo — Energy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8ecef;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .phone {
+      width: 390px;
+      height: 844px;
+      background: #f5f7f9;
+      border-radius: 40px;
+      box-shadow: 0 24px 80px rgba(31, 74, 92, 0.18);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .status-bar {
+      height: 44px;
+      padding: 12px 28px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1F4A5C;
+    }
+
+    .content {
+      flex: 1;
+      padding: 8px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+    }
+
+    .card-now {
+      background: #fce8ee;
+      border-radius: 20px;
+      padding: 20px 22px;
+      text-align: center;
+      transition: background 0.3s ease;
+    }
+
+    .card-now.level-Low { background: #e6f7ed; }
+    .card-now.level-Medium { background: #fef6e8; }
+    .card-now.level-High { background: #fce8ee; }
+
+    .card-now .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #1F4A5C;
+      opacity: 0.75;
+      margin-bottom: 10px;
+    }
+
+    .card-now .price {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1F4A5C;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .card-now .price .level { color: #E85D75; }
+    .card-now.level-Low .price .level { color: #3DBE6E; }
+    .card-now.level-Medium .price .level { color: #F6B352; }
+    .card-now.level-High .price .level { color: #E85D75; }
+
+    .card-now .sub {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1F4A5C;
+      opacity: 0.65;
+    }
+
+    .card-now.is-loading .price,
+    .card-now.is-loading .sub { opacity: 0.45; }
+
+    .arc-section {
+      padding: 4px 0 8px;
+    }
+
+    .arc-section .arc-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 500;
+      color: #1F4A5C;
+      opacity: 0.5;
+      padding: 0 4px 8px;
+    }
+
+    .arc-wrap {
+      width: 100%;
+      height: 120px;
+      position: relative;
+    }
+
+    .arc-wrap svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    .arc-legend {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      color: #1F4A5C;
+      opacity: 0.55;
+    }
+
+    .arc-legend span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .arc-legend i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .arc-legend i.coral { background: #E85D75; }
+    .arc-legend i.amber { background: #F6B352; }
+    .arc-legend i.green { background: #3DBE6E; }
+
+    .card-coming {
+      background: #fff;
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 16px rgba(31, 74, 92, 0.06);
+    }
+
+    .card-coming .title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #1F4A5C;
+      opacity: 0.6;
+      margin-bottom: 14px;
+    }
+
+    .coming-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(31, 74, 92, 0.06);
+    }
+
+    .coming-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .coming-row:first-of-type {
+      padding-top: 0;
+    }
+
+    .coming-row .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .coming-row.level-Medium .dot { background: #F6B352; }
+    .coming-row.level-Low .dot { background: #3DBE6E; }
+    .coming-row.level-High .dot { background: #E85D75; }
+
+    .coming-row .text {
+      font-size: 15px;
+      font-weight: 500;
+      color: #1F4A5C;
+    }
+
+    .coming-row.level-Medium .text .price { color: #F6B352; font-weight: 600; }
+    .coming-row.level-Low .text .price { color: #3DBE6E; font-weight: 600; }
+    .coming-row.level-High .text .price { color: #E85D75; font-weight: 600; }
+
+    .footer {
+      padding: 0 20px 36px;
+      margin-top: auto;
+    }
+
+    .btn-remind {
+      width: 100%;
+      padding: 18px 24px;
+      border: none;
+      border-radius: 16px;
+      background: #3DBE6E;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(61, 190, 110, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-remind:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(61, 190, 110, 0.4);
+    }
+
+    .btn-remind:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span id="clock">--:--</span>
+      <span>●●●</span>
+    </div>
+
+    <div class="content">
+      <section class="card-now is-loading" id="card-now">
+        <p class="label">ENERGY COST RIGHT NOW</p>
+        <p class="price"><span class="level" id="level-label">…</span> · <span id="price-value">€—</span></p>
+        <p class="sub" id="sub-text">Cargando precios…</p>
+      </section>
+
+      <section class="arc-section">
+        <div class="arc-labels">
+          <span>Ahora</span>
+          <span>+24 h</span>
+        </div>
+        <div class="arc-wrap" id="arc-wrap"></div>
+        <div class="arc-legend">
+          <span><i class="coral"></i> Caro</span>
+          <span><i class="amber"></i> Medio</span>
+          <span><i class="green"></i> Barato</span>
+        </div>
+      </section>
+
+      <section class="card-coming">
+        <p class="title">COMING UP</p>
+        <div id="coming-list"></div>
+      </section>
+    </div>
+
+    <div class="footer">
+      <button type="button" class="btn-remind">Recuérdame cuando esté barato</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const API_URL = 'https://api.preciodelaluz.org/v1/prices/all?zone=PCB';
+      const TZ = 'Europe/Madrid';
+      const COLORS = { High: '#E85D75', Medium: '#F6B352', Low: '#3DBE6E' };
+      const PATH_LEN = 1000;
+      const HOUR_LEN = PATH_LEN / 24;
+
+      const cardNow = document.getElementById('card-now');
+      const levelLabel = document.getElementById('level-label');
+      const priceValue = document.getElementById('price-value');
+      const subText = document.getElementById('sub-text');
+      const arcWrap = document.getElementById('arc-wrap');
+      const comingList = document.getElementById('coming-list');
+      const clockEl = document.getElementById('clock');
+
+      function madridNow() {
+        return new Date(new Date().toLocaleString('en-US', { timeZone: TZ }));
+      }
+
+      function formatDate(d) {
+        return new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(d);
+      }
+
+      function pad2(n) {
+        return String(n).padStart(2, '0');
+      }
+
+      function formatHHMM(d) {
+        return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+      }
+
+      function formatEuro(price) {
+        return '€' + price.toFixed(2);
+      }
+
+      function parsePrice(raw) {
+        if (raw == null || raw === '') return null;
+        let n = typeof raw === 'string' ? parseFloat(raw.replace(',', '.')) : Number(raw);
+        if (Number.isNaN(n)) return null;
+        if (n > 5) n = n / 1000;
+        return n;
+      }
+
+      function parseHourLabel(hora) {
+        if (hora == null) return null;
+        if (typeof hora === 'number') return hora;
+        const s = String(hora);
+        const m = s.match(/(\d{1,2})/);
+        return m ? parseInt(m[1], 10) : null;
+      }
+
+      function parseDayLabel(dia) {
+        if (!dia) return null;
+        const s = String(dia);
+        if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+        const m = s.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+        if (m) return m[3] + '-' + m[2] + '-' + m[1];
+        return null;
+      }
+
+      function slotKey(dayKey, hour) {
+        return dayKey + '|' + hour;
+      }
+
+      function addSlot(map, dayKey, hour, price) {
+        const p = parsePrice(price);
+        if (p == null || hour == null || hour < 0 || hour > 23 || !dayKey) return;
+        map.set(slotKey(dayKey, hour), { dayKey, hour, price: p });
+      }
+
+      function normalizePrices(json) {
+        const map = new Map();
+
+        function ingestItem(item) {
+          if (!item || typeof item !== 'object') return;
+          const price = item.price ?? item.PCB ?? item.pcb ?? item.value ?? item.precio;
+          let hour = item.hour ?? item.hora;
+          if (hour == null) hour = parseHourLabel(item.Hora);
+          let dayKey = item.date ?? item.day ?? item.Dia;
+          if (!dayKey && item.datetime) {
+            const dt = new Date(item.datetime);
+            dayKey = formatDate(dt);
+            if (hour == null) hour = dt.getHours();
+          }
+          if (!dayKey && item.time) {
+            const dt = new Date(item.time);
+            dayKey = formatDate(dt);
+            if (hour == null) hour = dt.getHours();
+          }
+          dayKey = parseDayLabel(dayKey) || dayKey;
+          if (dayKey && hour != null) addSlot(map, dayKey, hour, price);
+        }
+
+        if (Array.isArray(json)) {
+          json.forEach(ingestItem);
+        } else if (json && typeof json === 'object') {
+          if (json.PVPC && Array.isArray(json.PVPC)) {
+            json.PVPC.forEach(function (row) {
+              addSlot(map, parseDayLabel(row.Dia), parseHourLabel(row.Hora), row.PCB);
+            });
+          }
+
+          if (json.included && Array.isArray(json.included)) {
+            json.included.forEach(function (inc) {
+              const values = inc.attributes && inc.attributes.values;
+              if (!Array.isArray(values)) return;
+              values.forEach(function (v) {
+                const dt = new Date(v.datetime);
+                addSlot(map, formatDate(dt), dt.getHours(), v.value);
+              });
+            });
+          }
+
+          if (json.day && json.data && typeof json.data === 'object' && !Array.isArray(json.data)) {
+            Object.keys(json.data).forEach(function (h) {
+              addSlot(map, json.day, parseInt(h, 10), json.data[h]);
+            });
+          }
+
+          const todayKey = formatDate(madridNow());
+          const tomorrowKey = formatDate(new Date(madridNow().getTime() + 86400000));
+
+          ['today', 'tomorrow', 'prices', 'values'].forEach(function (key) {
+            const val = json[key];
+            if (Array.isArray(val)) {
+              val.forEach(ingestItem);
+            } else if (val && typeof val === 'object' && !Array.isArray(val)) {
+              const dayKey = key === 'tomorrow' ? tomorrowKey : (val.day || todayKey);
+              Object.keys(val).forEach(function (h) {
+                if (/^\d+$/.test(h)) addSlot(map, dayKey, parseInt(h, 10), val[h]);
+              });
+            }
+          });
+
+          if (json.data && typeof json.data === 'object') {
+            if (json.data.data && typeof json.data.data === 'object') {
+              const dayKey = json.data.day || json.day || todayKey;
+              Object.keys(json.data.data).forEach(function (h) {
+                if (/^\d+$/.test(h)) addSlot(map, dayKey, parseInt(h, 10), json.data.data[h]);
+              });
+            } else if (Array.isArray(json.data)) {
+              json.data.forEach(ingestItem);
+            }
+          }
+        }
+
+        return Array.from(map.values()).sort(function (a, b) {
+          if (a.dayKey !== b.dayKey) return a.dayKey.localeCompare(b.dayKey);
+          return a.hour - b.hour;
+        });
+      }
+
+      function getSlot(slots, dayKey, hour) {
+        return slots.find(function (s) { return s.dayKey === dayKey && s.hour === hour; });
+      }
+
+      function dailyAverage(slots, dayKey) {
+        const daySlots = slots.filter(function (s) { return s.dayKey === dayKey; });
+        if (!daySlots.length) return null;
+        const sum = daySlots.reduce(function (acc, s) { return acc + s.price; }, 0);
+        return sum / daySlots.length;
+      }
+
+      function getLevel(price, avg) {
+        if (price < avg) return 'Low';
+        if (price > avg) return 'High';
+        return 'Medium';
+      }
+
+      function buildTimeline24(slots, avg) {
+        const now = madridNow();
+        const timeline = [];
+        for (let i = 0; i < 24; i++) {
+          const t = new Date(now.getTime() + i * 3600000);
+          const dayKey = formatDate(t);
+          const hour = parseInt(
+            new Intl.DateTimeFormat('es-ES', { timeZone: TZ, hour: 'numeric', hour12: false }).format(t),
+            10
+          );
+          const slot = getSlot(slots, dayKey, hour);
+          const price = slot ? slot.price : avg;
+          timeline.push({
+            offset: i,
+            time: t,
+            dayKey: dayKey,
+            hour: hour,
+            price: price,
+            level: getLevel(price, avg)
+          });
+        }
+        return timeline;
+      }
+
+      function untilLabel(level, timeline) {
+        const adj = { High: 'Expensive', Low: 'Cheap', Medium: 'Moderate' };
+        for (let i = 1; i < timeline.length; i++) {
+          if (timeline[i].level !== level) {
+            return adj[level] + ' until ' + formatHHMM(timeline[i].time);
+          }
+        }
+        return adj[level] + ' until ' + formatHHMM(timeline[timeline.length - 1].time);
+      }
+
+      function groupPeriods(timeline, skipFirst) {
+        const startIdx = skipFirst ? 1 : 0;
+        const periods = [];
+        let i = startIdx;
+        while (i < timeline.length) {
+          const level = timeline[i].level;
+          const start = timeline[i].time;
+          let sum = timeline[i].price;
+          let count = 1;
+          let j = i + 1;
+          while (j < timeline.length && timeline[j].level === level) {
+            sum += timeline[j].price;
+            count++;
+            j++;
+          }
+          periods.push({
+            level: level,
+            start: start,
+            end: j < timeline.length ? timeline[j].time : new Date(timeline[timeline.length - 1].time.getTime() + 3600000),
+            avgPrice: sum / count
+          });
+          i = j;
+        }
+        return periods;
+      }
+
+      function renderArc(timeline) {
+        const nowLevel = timeline[0].level;
+        const nowColor = COLORS[nowLevel];
+        let offset = 0;
+        let segmentsHtml = '';
+        let i = 0;
+        while (i < timeline.length) {
+          const level = timeline[i].level;
+          let j = i + 1;
+          while (j < timeline.length && timeline[j].level === level) j++;
+          const len = (j - i) * HOUR_LEN;
+          const cap = i === 0 ? ' stroke-linecap="round"' : '';
+          const capEnd = j === timeline.length ? ' stroke-linecap="round"' : '';
+          segmentsHtml +=
+            '<use href="#arc24" stroke="' + COLORS[level] + '" stroke-width="12"' + cap + capEnd +
+            ' pathLength="1000" stroke-dasharray="' + len + ' ' + (PATH_LEN - len) + '" stroke-dashoffset="-' + offset + '"/>';
+          offset += len;
+          i = j;
+        }
+
+        const midIdx = Math.min(12, timeline.length - 1);
+        const endLabel = formatHHMM(timeline[timeline.length - 1].time);
+
+        arcWrap.innerHTML =
+          '<svg viewBox="0 0 350 110" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Precio energía próximas 24 horas">' +
+            '<defs><path id="arc24" pathLength="1000" d="M 24 82 Q 175 12 326 82"/></defs>' +
+            '<use href="#arc24" stroke="rgba(31,74,92,0.07)" stroke-width="16" stroke-linecap="round"/>' +
+            segmentsHtml +
+            '<text x="24" y="104" fill="#1F4A5C" fill-opacity="0.42" font-family="Poppins, sans-serif" font-size="9" font-weight="500">Ahora</text>' +
+            '<text x="310" y="104" fill="#1F4A5C" fill-opacity="0.42" font-family="Poppins, sans-serif" font-size="9" font-weight="500">' + endLabel + '</text>' +
+            '<circle id="arc-now-dot" cx="24" cy="82" r="9" fill="#fff" stroke="' + nowColor + '" stroke-width="4"/>' +
+            '<circle cx="24" cy="82" r="4" fill="' + nowColor + '"/>' +
+          '</svg>';
+      }
+
+      function renderComing(periods) {
+        comingList.innerHTML = '';
+        const show = periods.slice(0, 2);
+        if (!show.length) {
+          comingList.innerHTML = '<p class="text" style="font-size:14px;color:#1F4A5C;opacity:0.5">Sin tramos próximos</p>';
+          return;
+        }
+        show.forEach(function (p) {
+          const row = document.createElement('div');
+          row.className = 'coming-row level-' + p.level;
+          row.innerHTML =
+            '<span class="dot"></span>' +
+            '<p class="text">' + formatHHMM(p.start) + ' a ' + formatHHMM(p.end) +
+            ' · <span class="price">' + formatEuro(p.avgPrice) + '</span></p>';
+          comingList.appendChild(row);
+        });
+      }
+
+      function updateClock() {
+        clockEl.textContent = formatHHMM(madridNow());
+      }
+
+      function renderUI(slots) {
+        const now = madridNow();
+        const todayKey = formatDate(now);
+        const avg = dailyAverage(slots, todayKey);
+        if (avg == null) throw new Error('No hay datos para hoy');
+
+        const currentHour = parseInt(
+          new Intl.DateTimeFormat('es-ES', { timeZone: TZ, hour: 'numeric', hour12: false }).format(now),
+          10
+        );
+        const currentSlot = getSlot(slots, todayKey, currentHour);
+        const currentPrice = currentSlot ? currentSlot.price : avg;
+        const currentLevel = getLevel(currentPrice, avg);
+
+        const timeline = buildTimeline24(slots, avg);
+        const upcoming = groupPeriods(timeline, true);
+
+        cardNow.classList.remove('is-loading');
+        cardNow.className = 'card-now level-' + currentLevel;
+        levelLabel.textContent = currentLevel;
+        priceValue.textContent = formatEuro(currentPrice);
+        subText.textContent = untilLabel(currentLevel, timeline);
+
+        renderArc(timeline);
+        renderComing(upcoming);
+      }
+
+      function showError(msg) {
+        cardNow.classList.remove('is-loading');
+        cardNow.className = 'card-now';
+        levelLabel.textContent = '—';
+        priceValue.textContent = '€—';
+        subText.textContent = 'Error: ' + msg;
+      }
+
+      async function loadPrices() {
+        updateClock();
+        try {
+          const res = await fetch(API_URL);
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const json = await res.json();
+          const slots = normalizePrices(json);
+          if (!slots.length) throw new Error('respuesta vacía');
+          renderUI(slots);
+        } catch (err) {
+          showError(err.message || 'no se pudo conectar');
+        }
+      }
+
+      loadPrices();
+      setInterval(updateClock, 60000);
+    })();
+  </script>
+</body>
+</html>
