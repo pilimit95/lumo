@@ -364,12 +364,22 @@
           if (!dayKey && item.datetime) {
             const dt = new Date(item.datetime);
             dayKey = formatDate(dt);
-            if (hour == null) hour = dt.getHours();
+            if (hour == null) {
+              hour = parseInt(
+                new Intl.DateTimeFormat('es-ES', { timeZone: TZ, hour: 'numeric', hour12: false }).format(dt),
+                10
+              );
+            }
           }
           if (!dayKey && item.time) {
             const dt = new Date(item.time);
             dayKey = formatDate(dt);
-            if (hour == null) hour = dt.getHours();
+            if (hour == null) {
+              hour = parseInt(
+                new Intl.DateTimeFormat('es-ES', { timeZone: TZ, hour: 'numeric', hour12: false }).format(dt),
+                10
+              );
+            }
           }
           dayKey = parseDayLabel(dayKey) || dayKey;
           if (dayKey && hour != null) addSlot(map, dayKey, hour, price);
@@ -390,7 +400,11 @@
               if (!Array.isArray(values)) return;
               values.forEach(function (v) {
                 const dt = new Date(v.datetime);
-                addSlot(map, formatDate(dt), dt.getHours(), v.value);
+                const madridHour = parseInt(
+                  new Intl.DateTimeFormat('es-ES', { timeZone: TZ, hour: 'numeric', hour12: false }).format(dt),
+                  10
+                );
+                addSlot(map, formatDate(dt), madridHour, v.value);
               });
             });
           }
