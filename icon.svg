@@ -1,14 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <rect x="0" y="0" width="512" height="512" rx="112" ry="112" fill="#1F4A5C"/>
-  <!-- Coral segment: hours expensive -->
-  <path d="M 96 320 Q 160 220 220 188" fill="none" stroke="#E85D75" stroke-width="44" stroke-linecap="round"/>
-  <!-- Amber segment: medium hours -->
-  <path d="M 220 188 Q 286 156 348 184" fill="none" stroke="#F6B352" stroke-width="44" stroke-linecap="round"/>
-  <!-- Green segment: cheap hours -->
-  <path d="M 348 184 Q 400 210 416 320" fill="none" stroke="#3DBE6E" stroke-width="44" stroke-linecap="round"/>
-  <!-- Now marker dot at start of arc -->
-  <circle cx="96" cy="320" r="32" fill="#FFFFFF"/>
-  <circle cx="96" cy="320" r="16" fill="#E85D75"/>
-  <!-- Brand mark below -->
-  <rect x="184" y="408" width="144" height="14" rx="7" fill="#FFFFFF" opacity="0.95"/>
+  <text x="256" y="318" text-anchor="middle" font-family="Poppins Light" font-style="normal" font-size="140" fill="#E0F4FF" letter-spacing="-2">lumo</text>
+  <g transform="translate(388, 152)">
+    <path d="M 0 -38 L 10 -10 L 38 0 L 10 10 L 0 38 L -10 10 L -38 0 L -10 -10 Z" fill="#4ECDC4"/>
+  </g>
+  <g transform="translate(436, 112)">
+    <path d="M 0 -12 L 3 -3 L 12 0 L 3 3 L 0 12 L -3 3 L -12 0 L -3 -3 Z" fill="#8FC5E8"/>
+  </g>
+  <g transform="translate(356, 192)">
+    <path d="M 0 -9 L 3 -3 L 9 0 L 3 3 L 0 9 L -3 3 L -9 0 L -3 -3 Z" fill="#8FC5E8"/>
+  </g>
 </svg>
