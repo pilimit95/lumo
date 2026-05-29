@@ -1,0 +1,33 @@
+{
+  "name": "Lumo — Energy",
+  "short_name": "Lumo",
+  "description": "Sabe cuándo está barata la luz en España, sin liarte con el PVPC.",
+  "start_url": "/lumo/",
+  "scope": "/lumo/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "es",
+  "background_color": "#e8ecef",
+  "theme_color": "#1F4A5C",
+  "categories": ["utilities", "lifestyle"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
