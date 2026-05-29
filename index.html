@@ -173,59 +173,51 @@
     .arc-legend i.amber { background: #F6B352; }
     .arc-legend i.green { background: #3DBE6E; }
 
-    .card-coming {
-      background: #fff;
+    .card-best {
+      background: #EAF7F2;
+      border: 1px solid rgba(29, 158, 117, 0.18);
       border-radius: 20px;
       padding: 18px 20px;
-      box-shadow: 0 2px 16px rgba(31, 74, 92, 0.06);
+      text-align: center;
     }
 
-    .card-coming .title {
+    .card-best .row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .card-best .sun {
+      width: 16px;
+      height: 16px;
+      color: #1D9E75;
+    }
+
+    .card-best .title {
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.08em;
-      color: #1F4A5C;
-      opacity: 0.6;
-      margin-bottom: 14px;
+      color: #0F6E56;
     }
 
-    .coming-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(31, 74, 92, 0.06);
+    .card-best .window {
+      font-size: 32px;
+      font-weight: 700;
+      color: #0F6E56;
+      line-height: 1.1;
+      margin-bottom: 4px;
     }
 
-    .coming-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .coming-row:first-of-type {
-      padding-top: 0;
-    }
-
-    .coming-row .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .coming-row.level-Medium .dot { background: #F6B352; }
-    .coming-row.level-Low .dot { background: #3DBE6E; }
-    .coming-row.level-High .dot { background: #E85D75; }
-
-    .coming-row .text {
-      font-size: 15px;
+    .card-best .rationale {
+      font-size: 13px;
       font-weight: 500;
       color: #1F4A5C;
+      opacity: 0.65;
     }
 
-    .coming-row.level-Medium .text .price { color: #F6B352; font-weight: 600; }
-    .coming-row.level-Low .text .price { color: #3DBE6E; font-weight: 600; }
-    .coming-row.level-High .text .price { color: #E85D75; font-weight: 600; }
+    .card-best.is-none .window { color: #6B6B66; font-size: 22px; }
 
     .footer {
       padding: 0 20px 36px;
@@ -266,32 +258,48 @@
 
     <div class="content">
       <section class="card-now is-loading" id="card-now">
-        <p class="label">ENERGY COST RIGHT NOW</p>
+        <p class="label">ENERGY COST NOW</p>
         <p class="price"><span class="level" id="level-label">…</span> · <span id="price-value">€—</span></p>
-        <p class="sub" id="sub-text">Cargando precios…</p>
+        <p class="sub" id="sub-text">Loading prices…</p>
       </section>
 
       <section class="arc-section">
         <div class="arc-labels">
-          <span>Ahora</span>
-          <span>+24 h</span>
+          <span>Now</span>
+          <span>Next 24h</span>
         </div>
         <div class="arc-wrap" id="arc-wrap"></div>
         <div class="arc-legend">
-          <span><i class="coral"></i> Caro</span>
-          <span><i class="amber"></i> Medio</span>
-          <span><i class="green"></i> Barato</span>
+          <span><i class="green"></i> Low</span>
+          <span><i class="amber"></i> Medium</span>
+          <span><i class="coral"></i> High</span>
         </div>
       </section>
 
-      <section class="card-coming">
-        <p class="title">COMING UP</p>
-        <div id="coming-list"></div>
+      <section class="card-best" id="card-best">
+        <div class="row">
+          <svg class="sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" fill="currentColor"/>
+            <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="12" y1="2" x2="12" y2="4"/>
+              <line x1="12" y1="20" x2="12" y2="22"/>
+              <line x1="2" y1="12" x2="4" y2="12"/>
+              <line x1="20" y1="12" x2="22" y2="12"/>
+              <line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/>
+              <line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/>
+              <line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/>
+              <line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/>
+            </g>
+          </svg>
+          <p class="title">BEST TIME TODAY</p>
+        </div>
+        <p class="window" id="best-window">—</p>
+        <p class="rationale" id="best-rationale">Calculating the cheapest window…</p>
       </section>
     </div>
 
     <div class="footer">
-      <button type="button" class="btn-remind">Recuérdame cuando esté barato</button>
+      <button type="button" class="btn-remind">Remind me when it's cheap</button>
     </div>
   </div>
 
@@ -313,7 +321,9 @@
       const priceValue = document.getElementById('price-value');
       const subText = document.getElementById('sub-text');
       const arcWrap = document.getElementById('arc-wrap');
-      const comingList = document.getElementById('coming-list');
+      const cardBest = document.getElementById('card-best');
+      const bestWindow = document.getElementById('best-window');
+      const bestRationale = document.getElementById('best-rationale');
       const clockEl = document.getElementById('clock');
 
       function madridNow() {
@@ -508,40 +518,46 @@
         return timeline;
       }
 
-      function untilLabel(level, timeline) {
-        const adj = { High: 'Expensive', Low: 'Cheap', Medium: 'Moderate' };
-        for (let i = 1; i < timeline.length; i++) {
-          if (timeline[i].level !== level) {
-            return adj[level] + ' until ' + formatHHMM(timeline[i].time);
-          }
-        }
-        return adj[level] + ' until ' + formatHHMM(timeline[timeline.length - 1].time);
+      function guideText(level) {
+        if (level === 'Low') return 'Good time to use energy';
+        if (level === 'High') return 'Better to wait';
+        return 'Cheaper later';
       }
 
-      function groupPeriods(timeline, skipFirst) {
-        const startIdx = skipFirst ? 1 : 0;
-        const periods = [];
-        let i = startIdx;
+      function findBestWindow(timeline) {
+        // Longest consecutive Low stretch within the next 24h, ignoring the
+        // current hour so we always look ahead to a future window.
+        let best = null;
+        let i = 1;
         while (i < timeline.length) {
-          const level = timeline[i].level;
-          const start = timeline[i].time;
-          let sum = timeline[i].price;
-          let count = 1;
-          let j = i + 1;
-          while (j < timeline.length && timeline[j].level === level) {
+          if (timeline[i].level !== 'Low') { i++; continue; }
+          let j = i;
+          let sum = 0;
+          while (j < timeline.length && timeline[j].level === 'Low') {
             sum += timeline[j].price;
-            count++;
             j++;
           }
-          periods.push({
-            level: level,
-            start: start,
+          const candidate = {
+            start: timeline[i].time,
             end: j < timeline.length ? timeline[j].time : new Date(timeline[timeline.length - 1].time.getTime() + 3600000),
-            avgPrice: sum / count
-          });
+            hours: j - i,
+            avgPrice: sum / (j - i)
+          };
+          if (!best || candidate.hours > best.hours) best = candidate;
           i = j;
         }
-        return periods;
+        return best;
+      }
+
+      function rationaleFor(win) {
+        if (!win) return 'No clearly cheap hours today';
+        const startHour = parseInt(
+          new Intl.DateTimeFormat('es-ES', { timeZone: TZ, hour: 'numeric', hour12: false }).format(win.start),
+          10
+        );
+        if (startHour >= 10 && startHour <= 18) return 'Cheapest when the sun is out';
+        if (startHour >= 22 || startHour <= 5) return 'Cheapest while demand is low';
+        return 'Cheapest hours today';
       }
 
       function renderArc(timeline) {
@@ -568,33 +584,27 @@
         const endLabel = formatHHMM(timeline[timeline.length - 1].time);
 
         arcWrap.innerHTML =
-          '<svg viewBox="0 0 350 110" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Precio energía próximas 24 horas">' +
+          '<svg viewBox="0 0 350 110" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Energy price for the next 24 hours">' +
             '<defs><path id="arc24" pathLength="1000" d="M 24 82 Q 175 12 326 82"/></defs>' +
             '<use href="#arc24" stroke="rgba(31,74,92,0.07)" stroke-width="16" stroke-linecap="round"/>' +
             segmentsHtml +
-            '<text x="24" y="104" fill="#1F4A5C" fill-opacity="0.42" font-family="Poppins, sans-serif" font-size="9" font-weight="500">Ahora</text>' +
+            '<text x="24" y="104" fill="#1F4A5C" fill-opacity="0.42" font-family="Poppins, sans-serif" font-size="9" font-weight="500">Now</text>' +
             '<text x="310" y="104" fill="#1F4A5C" fill-opacity="0.42" font-family="Poppins, sans-serif" font-size="9" font-weight="500">' + endLabel + '</text>' +
             '<circle id="arc-now-dot" cx="24" cy="82" r="9" fill="#fff" stroke="' + nowColor + '" stroke-width="4"/>' +
             '<circle cx="24" cy="82" r="4" fill="' + nowColor + '"/>' +
           '</svg>';
       }
 
-      function renderComing(periods) {
-        comingList.innerHTML = '';
-        const show = periods.slice(0, 2);
-        if (!show.length) {
-          comingList.innerHTML = '<p class="text" style="font-size:14px;color:#1F4A5C;opacity:0.5">Sin tramos próximos</p>';
+      function renderBest(win) {
+        if (!win) {
+          cardBest.classList.add('is-none');
+          bestWindow.textContent = 'No cheap window today';
+          bestRationale.textContent = 'Prices are pretty even all day';
           return;
         }
-        show.forEach(function (p) {
-          const row = document.createElement('div');
-          row.className = 'coming-row level-' + p.level;
-          row.innerHTML =
-            '<span class="dot"></span>' +
-            '<p class="text">' + formatHHMM(p.start) + ' a ' + formatHHMM(p.end) +
-            ' · <span class="price">' + formatEuro(p.avgPrice) + '</span></p>';
-          comingList.appendChild(row);
-        });
+        cardBest.classList.remove('is-none');
+        bestWindow.textContent = formatHHMM(win.start) + ' to ' + formatHHMM(win.end);
+        bestRationale.textContent = rationaleFor(win);
       }
 
       function updateClock() {
@@ -605,7 +615,7 @@
         const now = madridNow();
         const todayKey = formatDate(now);
         const avg = dailyAverage(slots, todayKey);
-        if (avg == null) throw new Error('No hay datos para hoy');
+        if (avg == null) throw new Error('No data for today');
 
         const currentHour = parseInt(
           new Intl.DateTimeFormat('es-ES', { timeZone: TZ, hour: 'numeric', hour12: false }).format(now),
@@ -616,16 +626,16 @@
         const currentLevel = getLevel(currentPrice, avg);
 
         const timeline = buildTimeline24(slots, avg);
-        const upcoming = groupPeriods(timeline, true);
+        const bestWin = findBestWindow(timeline);
 
         cardNow.classList.remove('is-loading');
         cardNow.className = 'card-now level-' + currentLevel;
         levelLabel.textContent = currentLevel;
         priceValue.textContent = formatEuro(currentPrice);
-        subText.textContent = untilLabel(currentLevel, timeline);
+        subText.textContent = guideText(currentLevel);
 
         renderArc(timeline);
-        renderComing(upcoming);
+        renderBest(bestWin);
       }
 
       function showError(msg) {
@@ -633,7 +643,7 @@
         cardNow.className = 'card-now';
         levelLabel.textContent = '—';
         priceValue.textContent = '€—';
-        subText.textContent = 'Error: ' + msg;
+        subText.textContent = "Couldn't load prices";
       }
 
       function buildFallbackSlots() {
@@ -656,10 +666,10 @@
           if (!res.ok) throw new Error('HTTP ' + res.status);
           const json = await res.json();
           const slots = normalizePrices(json);
-          if (!slots.length) throw new Error('respuesta vacía');
+          if (!slots.length) throw new Error('empty response');
           renderUI(slots);
         } catch (err) {
-          console.warn('API falló, usando datos demo:', err.message);
+          console.warn('API failed, using demo data:', err.message);
           renderUI(buildFallbackSlots());
         }
       }
