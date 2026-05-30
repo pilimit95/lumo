@@ -595,6 +595,11 @@
           '</svg>';
       }
 
+      function snapToHour(d) {
+        const hourStr = new Intl.DateTimeFormat('es-ES', { timeZone: TZ, hour: '2-digit', hour12: false }).format(d);
+        return hourStr + ':00';
+      }
+
       function renderBest(win) {
         if (!win) {
           cardBest.classList.add('is-none');
@@ -603,7 +608,7 @@
           return;
         }
         cardBest.classList.remove('is-none');
-        bestWindow.textContent = formatHHMM(win.start) + ' to ' + formatHHMM(win.end);
+        bestWindow.textContent = snapToHour(win.start) + ' to ' + snapToHour(win.end);
         bestRationale.textContent = rationaleFor(win);
       }
 

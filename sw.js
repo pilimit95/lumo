@@ -1,5 +1,5 @@
 // Lumo service worker — cache-first para el shell, stale-while-revalidate para la API.
-const CACHE_NAME = 'lumo-v1';
+const CACHE_NAME = 'lumo-v2';
 const SHELL = [
   './',
   './index.html',
@@ -47,8 +47,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Recursos propios: cache-first con fallback a red.
+  // Recursos propios: network-first para HTML/JS (updates inmediatos),
+  // cache-first para iconos/manifest.
   if (url.origin === self.location.origin) {
+    const isShell = /\.(html|js|json)$/.test(url.pathname) || url.pathname.endsWith('/');
+    if (isShell) {
+      event.respondWith(
+        fetch(req).then((res) => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+          }
+          return res;
+        }).catch(() => caches.match(req).then((c) => c || caches.match('./index.html')))
+      );
+      return;
+    }
     event.respondWith(
       caches.match(req).then((cached) => cached || fetch(req).then((res) => {
         if (res && res.ok) {
